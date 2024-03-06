@@ -35,15 +35,21 @@
 from __future__ import annotations
 
 import base64
+import functools
 import json
 from concurrent.futures import TimeoutError  # pylint: disable=W0622
 from concurrent.futures import CancelledError
 from contextlib import suppress
+from http import HTTPStatus
 from typing import Optional
 
-from flask import Flask
+import google.oauth2.id_token as id_token
+from cachecontrol import CacheControl
+from flask import Flask, abort
 from google.auth import jwt
+from google.auth.transport.requests import Request
 from google.cloud import pubsub_v1
+from requests.sessions import Session
 from simple_cloudevent import (
     CloudEventVersionException,
     InvalidCloudEventError,
@@ -53,6 +59,32 @@ from simple_cloudevent import (
 )
 from werkzeug.local import LocalProxy
 
+
+def verify_jwt(session, request, aud):
+    """Verify token is valid."""
+    msg = ''
+    try:
+        # Get the Cloud Pub/Sub-generated JWT in the "Authorization" header.
+        id_token.verify_oauth2_token(
+            request.headers.get("Authorization").split()[1],
+            Request(session=session),
+            audience=aud
+        )
+    except Exception as e:  # TODO fix
+        msg = f"Invalid token: {e}\n"
+    finally:
+        return msg
+
+def ensure_authorized_queue_user(f):
+    """Ensures the user is authorized to use the queue."""
+    @functools.wraps(f)
+    def decorated_function(*args, **kwargs):
+        # Use CacheControl to avoid re-fetching certificates for every request.
+        if message := verify_jwt(CacheControl(Session())):
+            print(message)
+            abort(HTTPStatus.UNAUTHORIZED)
+        return f(*args, **kwargs)
+    return decorated_function
 
 class GcpQueue:
     """Provides Queue type services"""
