@@ -22,6 +22,8 @@ def verify_jwt(session):
             Request(session=session),
             audience=current_app.config.get("SUB_AUDIENCE")
         )
+        if current_app.config.get("DEBUG_REQUEST"):
+            structured_log(request, "INFO", f"claim: {claim}")
         sa_email = current_app.config.get("SUB_SERVICE_ACCOUNT")
         if not claim['email_verified'] or claim['email'] != sa_email:
             msg = f"Invalid service account or email not verified for email: {claim['email']}\n"
