@@ -849,7 +849,7 @@ simple_cloudevent = {git = "https://github.com/daxiom/simple-cloudevent.py"}
 type = "git"
 url = "https://github.com/bolyachevets/namex.git"
 reference = "test-gcp-auth"
-resolved_reference = "1b31b67efb2263e9d73cd704eb00926176ecedf0"
+resolved_reference = "a2445ea626ef624ee0b381c70f91659b4ec3007b"
 subdirectory = "services/pubsub"
 
 [[package]]
@@ -1856,7 +1856,7 @@ zipp = "^3.8.1"
 type = "git"
 url = "https://github.com/bolyachevets/namex.git"
 reference = "test-gcp-auth"
-resolved_reference = "1b31b67efb2263e9d73cd704eb00926176ecedf0"
+resolved_reference = "a2445ea626ef624ee0b381c70f91659b4ec3007b"
 subdirectory = "api"
 
 [[package]]
