@@ -26,6 +26,7 @@ from sentry_sdk import capture_message
 from sqlalchemy.exc import OperationalError
 from urllib3.exceptions import NewConnectionError
 
+from simple_cloudevent import SimpleCloudEvent
 from solr_names_updater.names_processors.names import process_add_to_solr as process_names_add  # noqa: I001
 from solr_names_updater.names_processors.names import process_delete_from_solr as process_names_delete  # noqa: I001
 from solr_names_updater.names_processors.possible_conflicts import (  # noqa: I001
@@ -41,15 +42,20 @@ bp = Blueprint("worker", __name__)
 
 
 @bp.route("/", methods=("POST",))
-@ensure_authorized_queue_user
+# @ensure_authorized_queue_user
 def worker():
     """
     Process the incoming cloud event.
     """
     structured_log(request, "INFO", f"Incoming raw msg: {request.data}")
     ret = {}, HTTPStatus.OK
-    if not (ce := queue.get_simple_cloud_event(request)):
-        return ret
+    try:
+        message = request.get_json()
+        message.pop("datacontenttype", None)
+        message.pop("specversion", None)
+        ce = SimpleCloudEvent(**message)
+    except Exception as err:
+         structured_log(request, "ERROR", f"got error: {str(err)}")
 
     structured_log(request, "INFO", f"received ce: {str(ce)}")
 
