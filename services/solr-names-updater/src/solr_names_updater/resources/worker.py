@@ -48,6 +48,7 @@ def worker():
     Process the incoming cloud event.
     """
     structured_log(request, "INFO", f"Incoming raw msg: {request.data}")
+    structured_log(request, "INFO", f"Headers: {request.headers}")
     ret = {}, HTTPStatus.OK
     try:
         message = request.get_json()
