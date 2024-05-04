@@ -21,10 +21,10 @@ from pathlib import Path
 import requests
 from flask import current_app, request
 from jinja2 import Template
-from legal_api.services import NameXService
 
 from entity_emailer.email_processors import substitute_template_parts
-from entity_emailer.services.logging import structured_log
+from gcp_queue.logging import structured_log
+from entity_emailer.services.helpers import query_nr_number
 
 
 def process(email_info: dict) -> dict:
@@ -39,7 +39,7 @@ def process(email_info: dict) -> dict:
     html_out = mail_template.render(identifier=nr_number)
 
     # get nr data
-    nr_response = NameXService.query_nr_number(nr_number)
+    nr_response = query_nr_number(nr_number)
     if nr_response.status_code != HTTPStatus.OK:
         structured_log(request, "ERROR", f"Failed to get nr info for name request: {nr_number}")
         return {}

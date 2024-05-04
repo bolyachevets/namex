@@ -21,11 +21,10 @@ from pathlib import Path
 
 from flask import current_app, request
 from jinja2 import Template
-from legal_api.services import NameXService
-from legal_api.utils.legislation_datetime import LegislationDatetime
 
+from entity_emailer.services.helpers import query_nr_number, format_as_report_string, as_legislation_timezone
 from entity_emailer.email_processors import substitute_template_parts
-from entity_emailer.services.logging import structured_log
+from gcp_queue.logging import structured_log
 
 
 class Option(Enum):
@@ -72,7 +71,7 @@ def process(email_info: dict, option) -> dict:  # pylint: disable-msg=too-many-l
     structured_log(request, "DEBUG", f"NR {option} notification: {email_info}")
     nr_number = email_info["identifier"]
 
-    nr_response = NameXService.query_nr_number(nr_number)
+    nr_response = query_nr_number(nr_number)
     if nr_response.status_code != HTTPStatus.OK:
         structured_log(request, "ERROR", f"Failed to get nr info for name request: {nr_number}")
         return {}
@@ -82,8 +81,8 @@ def process(email_info: dict, option) -> dict:  # pylint: disable-msg=too-many-l
     expiration_date = ""
     if nr_data["expirationDate"]:
         exp_date = datetime.fromisoformat(nr_data["expirationDate"])
-        exp_date_tz = LegislationDatetime.as_legislation_timezone(exp_date)
-        expiration_date = LegislationDatetime.format_as_report_string(exp_date_tz)
+        exp_date_tz = as_legislation_timezone(exp_date)
+        expiration_date = format_as_report_string(exp_date_tz)
 
     refund_value = ""
     if option == Option.REFUND.value:

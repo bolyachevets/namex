@@ -39,32 +39,14 @@ from http import HTTPStatus
 
 import requests
 from flask import Blueprint, current_app, request
-from legal_api.models import Filing
-from legal_api.services.bootstrap import AccountService
-from legal_api.services.flags import Flags
 
 from entity_emailer.email_processors import (
-    affiliation_notification,
-    agm_extension_notification,
-    agm_location_change_notification,
-    amalgamation_notification,
-    ar_reminder_notification,
-    bn_notification,
-    change_of_registration_notification,
-    consent_continuation_out_notification,
-    continuation_out_notification,
-    correction_notification,
-    dissolution_notification,
-    filing_notification,
-    mras_notification,
     name_request,
     nr_notification,
-    registration_notification,
-    restoration_notification,
-    special_resolution_notification,
 )
 from entity_emailer.services import queue
-from entity_emailer.services.logging import structured_log
+from gcp_queue.logging import structured_log
+from entity_emailer.services.helpers import get_bearer_token
 
 bp = Blueprint("worker", __name__)
 
@@ -108,7 +90,7 @@ def worker():
 
     # 3. Process email
     # ##
-    token = AccountService.get_bearer_token()
+    token = get_bearer_token()
     if not (email := process_email(email_msg, token)):
         # no email to send, take off queue
         structured_log(request, "INFO", f"No email to send for: {email_msg}")
@@ -144,9 +126,6 @@ def worker():
 
 def process_email(email_msg: dict, token: str):  # pylint: disable=too-many-branches, too-many-statements
     """Process the email contained in the submission."""
-    flags = Flags()
-    if current_app.config.get("LD_SDK_KEY", None):
-        flags.init_app(current_app)
 
     structured_log(request, "DEBUG", f"Attempting to process email: {email_msg}")
     etype = email_msg.get("type", None)
@@ -162,52 +141,8 @@ def process_email(email_msg: dict, token: str):  # pylint: disable=too-many-bran
             email = nr_notification.process(email_msg, option)
         else:
             email = name_request.process(email_msg)
-    elif etype and etype == "bc.registry.affiliation":
-        email = affiliation_notification.process(email_msg, token)
-    elif etype and etype == "bc.registry.bnmove":
-        email = bn_notification.process_bn_move(email_msg, token)
     else:
-        etype = email_msg["email"]["type"]
-        option = email_msg["email"]["option"]
-        if etype == "businessNumber":
-            email = bn_notification.process(email_msg["email"])
-        elif etype == "incorporationApplication" and option == "mras":
-            email = mras_notification.process(email_msg["email"])
-        elif etype == "annualReport" and option == "reminder":
-            flag_on = flags.value("disable-specific-service-provider")
-            email = ar_reminder_notification.process(email_msg["email"], token, flag_on)
-        elif etype == "agmLocationChange" and option == Filing.Status.COMPLETED.value:
-            email = agm_location_change_notification.process(email_msg["email"], token)
-        elif etype == "agmExtension" and option == Filing.Status.COMPLETED.value:
-            email = agm_extension_notification.process(email_msg["email"], token)
-        elif etype == "dissolution":
-            email = dissolution_notification.process(email_msg["email"], token)
-        elif etype == "registration":
-            email = registration_notification.process(email_msg["email"], token)
-        elif etype == "restoration":
-            email = restoration_notification.process(email_msg["email"], token)
-        elif etype == "changeOfRegistration":
-            email = change_of_registration_notification.process(email_msg["email"], token)
-        elif etype == "correction":
-            email = correction_notification.process(email_msg["email"], token)
-        elif etype == "consentContinuationOut":
-            email = consent_continuation_out_notification.process(email_msg["email"], token)
-        elif etype == "continuationOut":
-            email = continuation_out_notification.process(email_msg["email"], token)
-        elif etype == "specialResolution":
-            email = special_resolution_notification.process(email_msg["email"], token)
-        elif etype == "amalgamationApplication":
-            email = amalgamation_notification.process(email_msg["email"], token)
-        # pylint: disable-next=consider-iterating-dictionary
-        elif etype in filing_notification.FILING_TYPE_CONVERTER.keys():
-            if etype == "annualReport" and option == Filing.Status.COMPLETED.value:
-                return None
-            else:
-                email = filing_notification.process(email_msg["email"], token)
-                if not email:  # should only be if this was for a a coops filing
-                    return None
-        else:
-            return None
+        return None
     return email
 
 

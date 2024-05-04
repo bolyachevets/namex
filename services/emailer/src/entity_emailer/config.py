@@ -78,24 +78,9 @@ class Config:  # pylint: disable=too-few-public-methods
     SENTRY_DSN = os.getenv("SENTRY_DSN", None)
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    # POSTGRESQL
-    DB_USER = os.getenv("DATABASE_USERNAME", "")
-    DB_PASSWORD = os.getenv("DATABASE_PASSWORD", "")
-    DB_NAME = os.getenv("DATABASE_NAME", "")
-    DB_HOST = os.getenv("DATABASE_HOST", "")
-    DB_PORT = os.getenv("DATABASE_PORT", "5432")
-
-    # POSTGRESQL
-    if DB_UNIX_SOCKET := os.getenv("DATABASE_UNIX_SOCKET", None):
-        SQLALCHEMY_DATABASE_URI = (
-            f"postgresql+pg8000://{DB_USER}:{DB_PASSWORD}@/{DB_NAME}?unix_sock={DB_UNIX_SOCKET}/.s.PGSQL.5432"
-        )
-    else:
-        SQLALCHEMY_DATABASE_URI = f"postgresql+pg8000://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
     # variables
     LEGISLATIVE_TIMEZONE = os.getenv("LEGISLATIVE_TIMEZONE", "America/Vancouver")
-    MSG_RETRY_NUM = int(os.getenv("MSG_RETRY_NUM", "5"))
     TEMPLATE_PATH = os.getenv("TEMPLATE_PATH", None)
     DASHBOARD_URL = os.getenv("DASHBOARD_URL", None)
     LOG_LEVEL = os.getenv("LOG_LEVEL", None)
@@ -113,7 +98,7 @@ class Config:  # pylint: disable=too-few-public-methods
     PAY_API_VERSION = os.getenv("PAY_API_VERSION", "")
 
     LEGAL_API_URL = f"{BUSINESS_API_URL + BUSINESS_API_VERSION_2}"
-    NOTIFY_API_URL = f"{NOTIFY_API_URL + AUTH_API_VERSION}/notify/"
+    NOTIFY_API_URL = f"{NOTIFY_API_URL + NOTIFY_API_VERSION}/notify/"
     NAMEX_SVC_URL = f"{NAMEX_API_URL + NAMEX_API_VERSION}"
     PAY_API_URL = f"{PAY_API_URL + PAY_API_VERSION}/payment-request"
     AUTH_URL = f"{AUTH_API_URL + AUTH_API_VERSION}"

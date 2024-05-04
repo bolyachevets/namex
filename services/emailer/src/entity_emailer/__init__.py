@@ -39,9 +39,8 @@ from __future__ import annotations
 
 import sentry_sdk
 from flask import Flask
-from legal_api.models import db
-from legal_api.utils.run_version import get_run_version
 from sentry_sdk.integrations.flask import FlaskIntegration
+from utils import get_run_version
 
 from .config import Config, Production
 from .resources import register_endpoints
@@ -58,11 +57,10 @@ def create_app(environment: Config = Production, **kwargs) -> Flask:
         sentry_sdk.init(
             dsn=dsn,
             integrations=[FlaskIntegration()],
-            release=f"legal-api@{get_run_version()}",
+            release=f"names-emailer@{get_run_version()}",
             send_default_pii=False,
         )
 
-    db.init_app(app)
     queue.init_app(app)
     register_endpoints(app)
 
