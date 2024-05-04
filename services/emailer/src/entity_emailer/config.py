@@ -138,16 +138,9 @@ class Testing(Config):  # pylint: disable=too-few-public-methods
 
     DEBUG = True
     TESTING = True
-    # POSTGRESQL
-    DB_USER = os.getenv("DATABASE_TEST_USERNAME", "")
-    DB_PASSWORD = os.getenv("DATABASE_TEST_PASSWORD", "")
-    DB_NAME = os.getenv("DATABASE_TEST_NAME", "")
-    DB_HOST = os.getenv("DATABASE_TEST_HOST", "")
-    DB_PORT = os.getenv("DATABASE_TEST_PORT", "5432")
     DEPLOYMENT_ENV = "testing"
     LEGAL_API_URL = "https://legal-api-url/"
     PAY_API_URL = "https://pay-api-url/"
-    SQLALCHEMY_DATABASE_URI = f"postgresql+pg8000://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 
 class Production(Config):  # pylint: disable=too-few-public-methods
