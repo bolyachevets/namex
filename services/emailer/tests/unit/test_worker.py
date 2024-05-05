@@ -50,9 +50,9 @@ default_legal_name = 'TEST COMP'
 default_names_array = [{'name': default_legal_name, 'state': 'NE'}]
 
 
-def test_no_message(client):
+def test_no_message(client, mocker):
     """Return a 4xx when an no JSON present."""
-
+    mocker.patch('gcp_queue.gcp_auth.verify_jwt', return_value='')
     rv = client.post("/")
 
     assert rv.status_code == HTTPStatus.OK
@@ -83,7 +83,8 @@ CLOUD_EVENT_ENVELOPE = {
     "test_name,queue_envelope,expected",
     [("invalid", {}, HTTPStatus.OK), ("valid", CLOUD_EVENT_ENVELOPE, HTTPStatus.OK)],
 )
-def test_simple_cloud_event(client, test_name, queue_envelope, expected):
+def test_simple_cloud_event(client, test_name, queue_envelope, expected, mocker):
+    mocker.patch('gcp_queue.gcp_auth.verify_jwt', return_value='')
     rv = client.post("/", json=CLOUD_EVENT_ENVELOPE)
     assert rv.status_code == expected
 
@@ -155,6 +156,7 @@ def test_nr_notification(
 
     mocker.patch('namex_emailer.services.helpers.query_nr_number', return_value=nr_response)
     mocker.patch('namex_emailer.services.helpers.get_bearer_token', return_value=token)
+    mocker.patch('gcp_queue.gcp_auth.verify_jwt', return_value='')
 
     email_response = MockResponse(nr_json, 200)
     with patch.object(worker, "send_email", return_value=email_response):
@@ -194,7 +196,7 @@ def test_nr_receipt_notification(app, client, mocker):
 
     mocker.patch('namex_emailer.services.helpers.query_nr_number', return_value=nr_response)
     mocker.patch('namex_emailer.services.helpers.get_bearer_token', return_value=token)
-
+    mocker.patch('gcp_queue.gcp_auth.verify_jwt', return_value='')
     email_response = MockResponse(nr_json, 200)
 
     with patch.object(name_request, "get_nr_bearer_token", return_value=token):
@@ -238,11 +240,11 @@ def test_nr_receipt_notification(app, client, mocker):
         ),
     ],
 )
-def test_send_email_with_incomplete_payload(app, client, email_msg):
+def test_send_email_with_incomplete_payload(app, client, email_msg, mocker):
     """Assert that the email not have body can not be processed."""
     # Setup
     message = helper_create_cloud_event_envelope(data=email_msg)
-
+    mocker.patch('gcp_queue.gcp_auth.verify_jwt', return_value='')
     # TEST
     rv = client.post("/", json=message)
 
