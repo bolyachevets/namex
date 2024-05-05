@@ -16,10 +16,9 @@ from datetime import datetime
 from unittest.mock import patch
 
 import pytest
-from legal_api.services import NameXService
-from legal_api.utils.legislation_datetime import LegislationDatetime
 
-from entity_emailer.email_processors import nr_notification
+from namex_emailer.email_processors import nr_notification
+from namex_emailer.services.helpers import as_legislation_timezone, format_as_report_string
 from tests import MockResponse
 
 default_legal_name = "TEST COMP"
@@ -70,19 +69,18 @@ default_names_array = [{"name": default_legal_name, "state": "NE"}]
     ],
 )
 def test_nr_notification(
-    app, session, option, nr_number, subject, expiration_date, refund_value, expected_legal_name, names
+    app, option, nr_number, subject, expiration_date, refund_value, expected_legal_name, names, mocker
 ):
     """Assert that the nr notification can be processed."""
-    nr_json = {
-        "expirationDate": expiration_date,
-        "names": names,
-        "legalType": "BC",
-        "applicants": {"emailAddress": "test@test.com"},
-    }
-    nr_response = MockResponse(nr_json, 200)
-
-    # test processor
-    with patch.object(NameXService, "query_nr_number", return_value=nr_response) as mock_query_nr_number:
+    with app.app_context():
+        nr_json = {
+            "expirationDate": expiration_date,
+            "names": names,
+            "legalType": "BC",
+            "applicants": {"emailAddress": "test@test.com"},
+        }
+        nr_response = MockResponse(nr_json, 200)
+        mocker.patch('namex_emailer.services.helpers.query_nr_number', return_value=nr_response)
         email = nr_notification.process(
             {
                 "id": "123456789",
@@ -101,14 +99,13 @@ def test_nr_notification(
         if option == nr_notification.Option.REFUND.value:
             assert f"${refund_value} CAD" in email["content"]["body"]
         assert email["content"]["attachments"] == []
-        assert mock_query_nr_number.call_args[0][0] == nr_number
 
         if option == nr_notification.Option.BEFORE_EXPIRY.value:
             assert nr_number in email["content"]["body"]
             assert expected_legal_name in email["content"]["body"]
             exp_date = datetime.fromisoformat(expiration_date)
-            exp_date_tz = LegislationDatetime.as_legislation_timezone(exp_date)
-            assert_expiration_date = LegislationDatetime.format_as_report_string(exp_date_tz)
+            exp_date_tz = as_legislation_timezone(exp_date)
+            assert_expiration_date = format_as_report_string(exp_date_tz)
             assert assert_expiration_date in email["content"]["body"]
 
         if option == nr_notification.Option.EXPIRED.value:

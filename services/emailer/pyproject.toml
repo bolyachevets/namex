@@ -1,11 +1,11 @@
 [tool.poetry]
-name = "namex-emailer"
+name = "namex_emailer"
 version = "1.0"
 description = "This module is the service worker for sending emails about namex related events."
 authors = ["leodube <leo@dube.ca>"]
 license = "BSD-3-Clause"
 readme = "README.md"
-packages = [{include = "entity_emailer", from = "src"}]
+packages = [{include = "namex_emailer", from = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.12"
@@ -130,7 +130,7 @@ markers = [
 [tool.coverage.run]
 branch = true
 source = [
-   "src/entity-emailer",
+   "src/namex_emailer",
 ]
 omit = [
     "wsgi.py",

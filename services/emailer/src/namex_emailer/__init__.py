@@ -40,7 +40,7 @@ from __future__ import annotations
 import sentry_sdk
 from flask import Flask
 from sentry_sdk.integrations.flask import FlaskIntegration
-from entity_emailer.utils import get_run_version
+from namex_emailer.utils import get_run_version
 
 from .config import Config, Production
 from .resources import register_endpoints

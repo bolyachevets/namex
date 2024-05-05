@@ -38,9 +38,10 @@ Test-Suite to ensure that the version utilities are working as expected.
 """
 from importlib.metadata import version
 
-from entity_emailer import utils
+from namex_emailer import utils
 
-PACKAGE_NAME = "entity_emailer"
+
+PACKAGE_NAME = "namex_emailer"
 
 
 def test_get_version():

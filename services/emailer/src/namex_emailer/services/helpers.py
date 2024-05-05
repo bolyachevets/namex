@@ -6,7 +6,7 @@ from flask import current_app
 
 
 @staticmethod
-def get_bearer_token(cls):
+def get_bearer_token():
     """Get a valid Bearer token for the service to use."""
     token_url = current_app.config.get('ACCOUNT_SVC_AUTH_URL')
     client_id = current_app.config.get('ACCOUNT_SVC_CLIENT_ID')
@@ -18,8 +18,8 @@ def get_bearer_token(cls):
     res = requests.post(url=token_url,
                         data=data,
                         headers={'content-type': 'application/x-www-form-urlencoded'},
-                        auth=(client_id, client_secret),
-                        timeout=cls.timeout)
+                        auth=(client_id, client_secret))
+                        # timeout=cls.timeout)
 
     try:
         return res.json().get('access_token')

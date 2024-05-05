@@ -40,13 +40,14 @@ from http import HTTPStatus
 import requests
 from flask import Blueprint, current_app, request
 
-from entity_emailer.email_processors import (
+from namex_emailer.email_processors import (
     name_request,
     nr_notification,
 )
-from entity_emailer.services import queue
+from namex_emailer.services import queue
 from gcp_queue.logging import structured_log
-from entity_emailer.services.helpers import get_bearer_token
+# from namex_emailer.services.helpers import get_bearer_token
+import namex_emailer.services.helpers
 
 bp = Blueprint("worker", __name__)
 
@@ -80,17 +81,18 @@ def worker():
 
     structured_log(request, "INFO", f"received ce: {str(ce)}")
 
-    # 2. Get email message
-    # ##
-    if not (email_msg := json.loads(ce.data.decode("utf-8"))):
-        # no email message, take off queue
-        return {}, HTTPStatus.OK
+    # # 2. Get email message
+    # # ##
+    # if not (email_msg := json.loads(ce.data.decode("utf-8"))):
+    #     # no email message, take off queue
+    #     return {}, HTTPStatus.OK
 
+    email_msg = ce.data
     structured_log(request, "INFO", f"Extracted email msg: {email_msg}")
 
     # 3. Process email
     # ##
-    token = get_bearer_token()
+    token = namex_emailer.services.helpers.get_bearer_token()
     if not (email := process_email(email_msg, token)):
         # no email to send, take off queue
         structured_log(request, "INFO", f"No email to send for: {email_msg}")
