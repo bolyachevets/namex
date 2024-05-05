@@ -46,13 +46,15 @@ from namex_emailer.email_processors import (
 )
 from namex_emailer.services import queue
 from gcp_queue.logging import structured_log
-# from namex_emailer.services.helpers import get_bearer_token
+from gcp_queue.gcp_auth import ensure_authorized_queue_user
+
 import namex_emailer.services.helpers
 
 bp = Blueprint("worker", __name__)
 
 
 @bp.route("/", methods=("POST",))
+@ensure_authorized_queue_user
 def worker():
     """Process the incoming cloud event
     Flow
@@ -81,24 +83,17 @@ def worker():
 
     structured_log(request, "INFO", f"received ce: {str(ce)}")
 
-    # # 2. Get email message
-    # # ##
-    # if not (email_msg := json.loads(ce.data.decode("utf-8"))):
-    #     # no email message, take off queue
-    #     return {}, HTTPStatus.OK
-
+    # 2. Process email
+    # ##
     email_msg = ce.data
     structured_log(request, "INFO", f"Extracted email msg: {email_msg}")
-
-    # 3. Process email
-    # ##
     token = namex_emailer.services.helpers.get_bearer_token()
     if not (email := process_email(email_msg, token)):
         # no email to send, take off queue
         structured_log(request, "INFO", f"No email to send for: {email_msg}")
         return {}, HTTPStatus.OK
 
-    # 4. Send email
+    # 3. Send email
     # ##
     if not email or "recipients" not in email or "content" not in email or "body" not in email["content"]:
         # email object(s) is empty, take off queue
