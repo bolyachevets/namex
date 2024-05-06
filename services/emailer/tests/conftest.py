@@ -20,7 +20,7 @@ from typing import Final
 import pytest
 
 from namex_emailer import create_app
-from namex_emailer.config import Testing
+from config import Testing
 
 from . import FROZEN_DATETIME
 

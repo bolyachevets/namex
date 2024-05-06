@@ -42,7 +42,7 @@ from flask import Flask
 from sentry_sdk.integrations.flask import FlaskIntegration
 from namex_emailer.utils import get_run_version
 
-from .config import Config, Production
+from config import Config, Production
 from .resources import register_endpoints
 from .services import queue
 

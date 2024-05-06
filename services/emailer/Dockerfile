@@ -12,7 +12,6 @@ ENV PORT=8080
 LABEL org.label-schema.vcs-ref=${VCS_REF} \
     org.label-schema.build-date=${BUILD_DATE}
 
-LABEL maintainer="leodube"
 LABEL vendor="BCROS"
 
 ARG APP_ENV \
