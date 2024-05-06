@@ -86,4 +86,4 @@ COPY --chown=web:web . /code
 
 # ENV PYTHONPATH=/opt/app-root/src
 
-CMD gunicorn --log-level debug --bind 0.0.0.0:${PORT} --config /code/gunicorn_config.py wsgi:app
+CMD gunicorn --preload --bind 0.0.0.0:${PORT} --config /code/gunicorn_config.py wsgi:app
