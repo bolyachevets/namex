@@ -91,13 +91,13 @@ class Config:  # pylint: disable=too-few-public-methods
     NOTIFY_API_URL = os.getenv("NOTIFY_API_URL", "")
     NOTIFY_API_VERSION = os.getenv("NOTIFY_API_VERSION", "")
     BUSINESS_API_URL = os.getenv("BUSINESS_API_URL", "")
-    BUSINESS_API_VERSION_2 = os.getenv("BUSINESS_API_VERSION2", "")
+    BUSINESS_API_VERSION = os.getenv("BUSINESS_API_VERSION", "")
     NAMEX_API_URL = os.getenv("NAMEX_API_URL", "")
     NAMEX_API_VERSION = os.getenv("NAMEX_API_VERSION", "")
     PAY_API_URL = os.getenv("PAY_API_URL", "")
     PAY_API_VERSION = os.getenv("PAY_API_VERSION", "")
 
-    LEGAL_API_URL = f"{BUSINESS_API_URL + BUSINESS_API_VERSION_2}"
+    LEGAL_API_URL = f"{BUSINESS_API_URL + BUSINESS_API_VERSION}"
     NOTIFY_API_URL = f"{NOTIFY_API_URL + NOTIFY_API_VERSION}/notify/"
     NAMEX_SVC_URL = f"{NAMEX_API_URL + NAMEX_API_VERSION}"
     PAY_API_URL = f"{PAY_API_URL + PAY_API_VERSION}/payment-request"
