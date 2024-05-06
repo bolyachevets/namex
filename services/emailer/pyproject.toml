@@ -3,6 +3,7 @@ name = "namex_emailer"
 version = "1.0"
 description = "This module is the service worker for sending emails about namex related events."
 license = "BSD-3-Clause"
+authors = ['bolyachevets']
 readme = "README.md"
 packages = [{include = "namex_emailer", from = "src"}]
 
@@ -25,8 +26,6 @@ pytest = "^8.0.0"
 pytest-mock = "^3.12.0"
 pytest-cov = "^4.1.0"
 requests-mock = "^1.11.0"
-psycopg2-binary = "^2.9.4"
-sqlalchemy = "^1.4.18"
 black = "^21"
 pylint = "^3.0.3"
 bandit = "^1.7.6"
@@ -78,7 +77,7 @@ fail-under = 10
 max-line-length = 120
 ignore = [ "migrations", "devops", "tests"]
 ignore-patterns = ["^\\.#"]
-ignored-modules= ["flask_sqlalchemy", "sqlalchemy", "SQLAlchemy" , "alembic", "scoped_session"]
+ignored-modules= ["scoped_session"]
 ignored-classes= "scoped_session"
 ignore-long-lines = "^\\s*(# )?<?https?://\\S+>?$"
 extension-pkg-whitelist = "pydantic"

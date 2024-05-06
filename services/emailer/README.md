@@ -9,7 +9,6 @@ BC Registries Names Emailer Service
 ## Technology Stack Used
 * GCP pubsub
 * Python, Flask
-* Postgres -  SQLAlchemy, psycopg2-binary & alembic
 
 ## Project Status
 
