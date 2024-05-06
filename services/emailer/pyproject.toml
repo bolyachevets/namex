@@ -2,7 +2,6 @@
 name = "namex_emailer"
 version = "1.0"
 description = "This module is the service worker for sending emails about namex related events."
-authors = ["leodube <leo@dube.ca>"]
 license = "BSD-3-Clause"
 readme = "README.md"
 packages = [{include = "namex_emailer", from = "src"}]

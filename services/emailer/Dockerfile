@@ -1,4 +1,4 @@
-FROM python:3.12.2 AS development_build
+FROM python:3.12.2
 
 USER root
 
@@ -81,7 +81,7 @@ RUN --mount=type=cache,target="$POETRY_CACHE_DIR" \
 USER web
 
 # The following stage is only for production:
-FROM development_build AS production_build
+# FROM development_build AS production_build
 COPY --chown=web:web . /code
 
 # ENV PYTHONPATH=/opt/app-root/src
