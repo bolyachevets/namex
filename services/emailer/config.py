@@ -77,8 +77,6 @@ class Config:  # pylint: disable=too-few-public-methods
 
     SENTRY_DSN = os.getenv("SENTRY_DSN", None)
 
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-
     # variables
     LEGISLATIVE_TIMEZONE = os.getenv("LEGISLATIVE_TIMEZONE", "America/Vancouver")
     TEMPLATE_PATH = os.getenv("TEMPLATE_PATH", None)
