@@ -57,24 +57,9 @@ bp = Blueprint("worker", __name__)
 @ensure_authorized_queue_user
 def worker():
     """Process the incoming cloud event
-    Flow
-    --------
-    1. Get cloud event
-    2. Get email message
-    3. Process email
-    4. Send email
-
-    Decisions on returning a 2xx or failing value to
-    the Queue should be noted here:
-    - Empty or garbaled messages are knocked off the Q
-    - If there is no email to send, knock off Q
-    - If email object(s) are empty or missing, knock off Q
-    - If email failed to send, put back on Q
     """
     structured_log(request, "INFO", f"Incoming raw msg: {request.data}")
 
-    # 1. Get cloud event
-    # ##
     if not (ce := queue.get_simple_cloud_event(request)):
         #
         # Decision here is to return a 200,
@@ -83,8 +68,6 @@ def worker():
 
     structured_log(request, "INFO", f"received ce: {str(ce)}")
 
-    # 2. Process email
-    # ##
     email_msg = ce.data
     structured_log(request, "INFO", f"Extracted email msg: {email_msg}")
     token = namex_emailer.services.helpers.get_bearer_token()
@@ -93,8 +76,6 @@ def worker():
         structured_log(request, "INFO", f"No email to send for: {email_msg}")
         return {}, HTTPStatus.OK
 
-    # 3. Send email
-    # ##
     if not email or "recipients" not in email or "content" not in email or "body" not in email["content"]:
         # email object(s) is empty, take off queue
         structured_log(request, "INFO", "Send email: email object(s) is empty")
