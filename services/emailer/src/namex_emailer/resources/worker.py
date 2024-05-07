@@ -67,13 +67,10 @@ def worker():
         return {}, HTTPStatus.OK
 
     structured_log(request, "INFO", f"received ce: {str(ce)}")
-
-    email_msg = ce.data
-    structured_log(request, "INFO", f"Extracted email msg: {email_msg}")
     token = namex_emailer.services.helpers.get_bearer_token()
-    if not (email := process_email(email_msg, token)):
+    if not (email := process_email(ce)):
         # no email to send, take off queue
-        structured_log(request, "INFO", f"No email to send for: {email_msg}")
+        structured_log(request, "INFO", f"No email to send for: {ce}")
         return {}, HTTPStatus.OK
 
     if not email or "recipients" not in email or "content" not in email or "body" not in email["content"]:
@@ -93,7 +90,7 @@ def worker():
         structured_log(
             request,
             "ERROR",
-            f"Queue Error - email failed to send: {json.dumps(email_msg)}"
+            f"Queue Error - email failed to send: {str(ce)}"
             "\n\nThis message has been put back on the queue for reprocessing.",
         )
         return {}, HTTPStatus.NOT_FOUND
@@ -102,13 +99,13 @@ def worker():
     return {}, HTTPStatus.OK
 
 
-def process_email(email_msg: dict, token: str):  # pylint: disable=too-many-branches, too-many-statements
+def process_email(email_msg: dict):  # pylint: disable=too-many-branches, too-many-statements
     """Process the email contained in the submission."""
 
     structured_log(request, "DEBUG", f"Attempting to process email: {email_msg}")
-    etype = email_msg.get("type", None)
+    etype = email_msg.type
     if etype and etype == "bc.registry.names.request":
-        option = email_msg.get("data", {}).get("request", {}).get("option", None)
+        option = email_msg.data.get("request", {}).get("option", None)
         if option and option in [
             nr_notification.Option.BEFORE_EXPIRY.value,
             nr_notification.Option.EXPIRED.value,

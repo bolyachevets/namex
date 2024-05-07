@@ -3,23 +3,22 @@ from datetime import datetime
 import pytz
 import requests
 from flask import current_app
+from functools import cache
 
 
 @staticmethod
+@cache
 def get_bearer_token():
     """Get a valid Bearer token for the service to use."""
     token_url = current_app.config.get('ACCOUNT_SVC_AUTH_URL')
     client_id = current_app.config.get('ACCOUNT_SVC_CLIENT_ID')
     client_secret = current_app.config.get('ACCOUNT_SVC_CLIENT_SECRET')
 
-    data = 'grant_type=client_credentials'
-
     # get service account token
     res = requests.post(url=token_url,
-                        data=data,
+                        data='grant_type=client_credentials',
                         headers={'content-type': 'application/x-www-form-urlencoded'},
                         auth=(client_id, client_secret))
-                        # timeout=cls.timeout)
 
     try:
         return res.json().get('access_token')

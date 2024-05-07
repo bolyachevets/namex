@@ -24,9 +24,6 @@ from config import Testing
 
 from . import FROZEN_DATETIME
 
-DB_TEST_NAME: Final = os.getenv("DATABASE_TEST_NAME")
-
-
 
 @contextmanager
 def not_raises(exception):
