@@ -54,7 +54,7 @@ bp = Blueprint("worker", __name__)
 
 
 @bp.route("/", methods=("POST",))
-# @ensure_authorized_queue_user
+@ensure_authorized_queue_user
 def worker():
     """Process the incoming cloud event
     """
