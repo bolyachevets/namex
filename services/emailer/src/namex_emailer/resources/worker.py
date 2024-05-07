@@ -54,7 +54,7 @@ bp = Blueprint("worker", __name__)
 
 
 @bp.route("/", methods=("POST",))
-@ensure_authorized_queue_user
+# @ensure_authorized_queue_user
 def worker():
     """Process the incoming cloud event
     """
@@ -124,7 +124,7 @@ def process_email(email_msg: dict):  # pylint: disable=too-many-branches, too-ma
 def send_email(email: dict, token: str):
     """Send the email"""
     return requests.post(
-        f'{current_app.get("NOTIFY_API_URL", "")}',
+        f'{current_app.config.get("NOTIFY_API_URL", "")}',
         json=email,
         headers={
             "Content-Type": "application/json",

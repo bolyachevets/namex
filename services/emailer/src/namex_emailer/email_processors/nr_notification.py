@@ -70,7 +70,7 @@ def process(email_info: dict, option) -> dict:  # pylint: disable-msg=too-many-l
     valid values of option: Option
     """
     structured_log(request, "DEBUG", f"NR {option} notification: {email_info}")
-    nr_number = email_info["identifier"]
+    nr_number = email_info.data['request']['nrNum']
 
     nr_response = namex_emailer.services.helpers.query_nr_number(nr_number)
     if nr_response.status_code != HTTPStatus.OK:

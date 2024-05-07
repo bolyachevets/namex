@@ -66,7 +66,7 @@ def process(email_info: dict) -> dict:
 def _get_pdfs(nr_id: str, payment_token: str) -> list:
     """Get the receipt for the name request application."""
     pdfs = []
-    token = get_nr_bearer_token()
+    token = namex_emailer.services.helpers.get_bearer_token()
     if not token or not nr_id or not payment_token:
         return []
 
@@ -114,24 +114,3 @@ def _get_pdfs(nr_id: str, payment_token: str) -> list:
         }
     )
     return pdfs
-
-
-def get_nr_bearer_token():
-    """Get a valid Bearer token for the Name Request Service."""
-    token_url = current_app.config.get("NAMEX_AUTH_SVC_URL")
-    client_id = current_app.config.get("NAMEX_SERVICE_CLIENT_USERNAME")
-    client_secret = current_app.config.get("NAMEX_SERVICE_CLIENT_SECRET")
-
-    data = "grant_type=client_credentials"
-    # get service account token
-    res = requests.post(
-        url=token_url,
-        data=data,
-        headers={"content-type": "application/x-www-form-urlencoded"},
-        auth=(client_id, client_secret),
-    )
-    try:
-        return res.json().get("access_token")
-    except Exception:  # noqa B902; pylint: disable=W0703;
-        structured_log(request, "ERROR", "Failed to get nr token")
-        return None

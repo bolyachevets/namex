@@ -96,7 +96,7 @@ class Config:  # pylint: disable=too-few-public-methods
     PAY_API_VERSION = os.getenv("PAY_API_VERSION", "")
 
     LEGAL_API_URL = f"{BUSINESS_API_URL + BUSINESS_API_VERSION}"
-    NOTIFY_API_URL = f"{NOTIFY_API_URL + NOTIFY_API_VERSION}/notify/"
+    NOTIFY_API_URL = f"{NOTIFY_API_URL + NOTIFY_API_VERSION}/notify"
     NAMEX_SVC_URL = f"{NAMEX_API_URL + NAMEX_API_VERSION}"
     PAY_API_URL = f"{PAY_API_URL + PAY_API_VERSION}/payment-request"
     AUTH_URL = f"{AUTH_API_URL + AUTH_API_VERSION}"
@@ -106,9 +106,6 @@ class Config:  # pylint: disable=too-few-public-methods
     ACCOUNT_SVC_CLIENT_ID = os.getenv("KEYCLOAK_CLIENT_ID")
     ACCOUNT_SVC_CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET")
     ACCOUNT_SVC_TIMEOUT = os.getenv("KEYCLOAK_TIMEOUT")
-    NAMEX_AUTH_SVC_URL = os.getenv("KEYCLOAK_AUTH_TOKEN_URL")
-    NAMEX_SERVICE_CLIENT_USERNAME = os.getenv("KEYCLOAK_CLIENT_ID")
-    NAMEX_SERVICE_CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET")
 
     SUB_AUDIENCE = os.getenv('SUB_AUDIENCE', '')
     SUB_SERVICE_ACCOUNT = os.getenv('SUB_SERVICE_ACCOUNT', '')

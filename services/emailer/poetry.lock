@@ -405,7 +405,7 @@ simple_cloudevent = {git = "https://github.com/daxiom/simple-cloudevent.py"}
 type = "git"
 url = "https://github.com/bolyachevets/namex.git"
 reference = "feature-queue-upgrade-python3.12"
-resolved_reference = "182310de2ab248429e0395e4b5d422af17d829ef"
+resolved_reference = "22085e7a0be6b4fbae7649c00882c15427d3fe81"
 subdirectory = "services/pubsub"
 
 [[package]]
@@ -1483,4 +1483,4 @@ watchdog = ["watchdog (>=2.3)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "f479801431c503cb0be41d211ea25f66fe49db0ab5c6f0ed622e440bcb3d3fa0"
+content-hash = "5a5a828e43bb30f7cbd7df60d3d6d6dc324c391664d7c9349be01524e3355450"
