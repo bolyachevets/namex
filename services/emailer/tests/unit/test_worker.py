@@ -149,7 +149,6 @@ def test_nr_notification(
         "id": "123456789",
         "type": "bc.registry.names.request",
         "source": f"/requests/{nr_number}",
-        "identifier": nr_number,
         "data": {"request": {"nrNum": nr_number, "option": option, "refundValue": refund_value}},
     }
     message = helper_create_cloud_event_envelope(data=email_msg)
@@ -183,7 +182,6 @@ def test_nr_receipt_notification(app, client, mocker):
         "id": "123456789",
         "type": "bc.registry.names.request",
         "source": f"/requests/{nr_number}",
-        "identifier": nr_number,
         "data": {
             "request": {
                 "header": {"nrNum": nr_number},
@@ -199,15 +197,14 @@ def test_nr_receipt_notification(app, client, mocker):
     mocker.patch('gcp_queue.gcp_auth.verify_jwt', return_value='')
     email_response = MockResponse(nr_json, 200)
 
-    with patch.object(name_request, "get_nr_bearer_token", return_value=token):
-        with patch.object(name_request, "_get_pdfs", return_value=pdfs):
-            with patch.object(worker, "send_email", return_value=email_response):
-                with patch.object(queue, "publish", return_value={}):
-                    # TEST
-                    rv = client.post("/", json=message)
+    with patch.object(name_request, "_get_pdfs", return_value=pdfs):
+        with patch.object(worker, "send_email", return_value=email_response):
+            with patch.object(queue, "publish", return_value={}):
+                # TEST
+                rv = client.post("/", json=message)
 
-                    # Check
-                    assert rv.status_code == HTTPStatus.OK
+                # Check
+                assert rv.status_code == HTTPStatus.OK
 
 
 @pytest.mark.parametrize(

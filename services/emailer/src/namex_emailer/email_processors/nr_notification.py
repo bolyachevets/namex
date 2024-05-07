@@ -20,12 +20,12 @@ from http import HTTPStatus
 from pathlib import Path
 
 from flask import current_app, request
+from gcp_queue.logging import structured_log
 from jinja2 import Template
 
 # from namex_emailer.services.helpers import query_nr_number, format_as_report_string, as_legislation_timezone
 import namex_emailer.services.helpers
 from namex_emailer.email_processors import substitute_template_parts
-from gcp_queue.logging import structured_log
 
 
 class Option(Enum):

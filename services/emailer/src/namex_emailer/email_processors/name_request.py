@@ -20,11 +20,12 @@ from pathlib import Path
 
 import requests
 from flask import current_app, request
+from gcp_queue.logging import structured_log
 from jinja2 import Template
 
-from namex_emailer.email_processors import substitute_template_parts
-from gcp_queue.logging import structured_log
 import namex_emailer.services.helpers
+from namex_emailer.email_processors import substitute_template_parts
+
 
 def process(email_info: dict) -> dict:
     """Build the email for Name Request notification."""

@@ -40,9 +40,10 @@ from __future__ import annotations
 import sentry_sdk
 from flask import Flask
 from sentry_sdk.integrations.flask import FlaskIntegration
-from namex_emailer.utils import get_run_version
 
 from config import Config, Production
+from namex_emailer.utils import get_run_version
+
 from .resources import register_endpoints
 from .services import queue
 
