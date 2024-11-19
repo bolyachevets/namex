@@ -947,7 +947,7 @@ class SolrQueries:
 
         name = ''
         word_count = 0
-        for text in processed_words['analysis']['field_names']['name']['index'][count]:
+        for text in processed_words['analysis']['field_names']['name']['index'][count - 1]:
             if word_count < max_len:
                 name += text['text'] + ' '
             else:
