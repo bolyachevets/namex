@@ -523,10 +523,10 @@ class RequestSearch(Resource):
 
             nr_num = get_nr_num_from_query(query)
             if nr_num:
-                nrs = get_nrs_like_nr_num(nr_num)
+                nrs = get_nrs_like_nr_num(nr_num, limit=rows, offset=start)
             else:
                 # above, we returned nothing if query was empty
-                nrs = get_nrs_like_names(query)
+                nrs = get_nrs_like_names(query, limit=rows, offset=start)
 
             for nr in nrs:
                 key = normalize_nr_key(nr.nrNum)
