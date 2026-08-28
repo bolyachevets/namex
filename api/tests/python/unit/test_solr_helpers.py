@@ -19,3 +19,18 @@ def test_name_pre_processing_preserves_2letter_words():
     """Verify 2-letter words like 'AI', 'EV', 'LI' are preserved intact."""
     result = SolrHlpers._name_pre_processing("AI SOLUTIONS EV CHARGING")
     assert result == "ai solutions ev charging"
+
+
+def test_conflicts_post_process_exact_match_space_insensitive():
+    """Verify H. & H. INVESTMENTS LTD is classified as Exact Match for HH query."""
+    mock_data = {
+        'searchResults': {
+            'results': [
+                {'name': 'H. & H. INVESTMENTS LTD.', 'name_state': 'CORP'}
+            ]
+        }
+    }
+    query_name = SolrHlpers._get_name_without_designation(SolrHlpers._name_pre_processing("HH INVESTMENTS"))
+    result = SolrHlpers._conflicts_post_process(mock_data, query_name)
+    assert len(result['exactNames']) == 1
+    assert result['exactNames'][0]['name'] == 'H. & H. INVESTMENTS LTD.'

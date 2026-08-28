@@ -34,6 +34,11 @@ class SolrHlpers:
         return ' '.join(processed_name.split())
 
     @classmethod
+    def _compress_name(cls, name: str) -> str:
+        """Return name with spaces and non-alphanumeric characters removed."""
+        return re.sub(r'[^a-zA-Z0-9]', '', name or '').upper()
+
+    @classmethod
     def _conflicts_post_process(cls, q_data, query_name):
         """
         Processes Solr search results to filter candidates based on phonetic matching and designation exclusion.
@@ -52,7 +57,7 @@ class SolrHlpers:
         for rcd in q_data.get('searchResults', {}).get('results', []):
             rcd_name = cls._name_pre_processing(rcd.get('name', ''))
             nm = cls._get_name_without_designation(rcd_name)
-            if nm == query_name:
+            if cls._compress_name(nm) == cls._compress_name(query_name):
                 rcd['type'] = 'exact'
                 exact_matches.append(rcd)
                 if rcd.get('name_state') in ('CORP', 'A'):
